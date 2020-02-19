@@ -1,0 +1,9 @@
+.progress {
+  height: 2rem;
+  background-color: #575757;
+  margin: .5rem 1rem;
+}
+
+.videoSlider {
+  margin: 2rem;
+}
