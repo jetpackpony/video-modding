@@ -11,7 +11,6 @@ function VideoSlider({
   onEndChange,
   duration,
 }) {
-  console.log("Duratino", duration);
   const start = 0;
   const end = duration;
 
