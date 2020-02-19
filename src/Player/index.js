@@ -96,6 +96,8 @@ function Player({ video }) {
             <>
               <VideoSlider
                 duration={videoData.duration}
+                startTime={videoData.start}
+                endTime={videoData.end}
                 onStartChange={onStartChange}
                 onEndChange={onEndChange}
               />

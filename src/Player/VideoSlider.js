@@ -6,16 +6,34 @@ import styles from './Player.module.css';
 
 const Range = Slider.createSliderWithTooltip(Slider.Range);
 
+const debounce = (callback, timeout = 100) => {
+  let timeoutId;
+  return (...args) => {
+    clearTimeout(timeoutId);
+    timeoutId = setTimeout(() => callback.apply(null, args), timeout);
+  };
+};
+
 function VideoSlider({
   onStartChange,
   onEndChange,
   duration,
+  startTime,
+  endTime
 }) {
   const start = 0;
   const end = duration;
 
-  const startTime = useRef(start);
-  const endTime = useRef(end);
+  const onChange = debounce((e) => {
+    const newStart = e[0];
+    const newEnd = e[1];
+    if (startTime !== newStart) {
+      onStartChange(newStart);
+    }
+    if (endTime !== newEnd) {
+      onEndChange(newEnd);
+    }
+  });
   return (
     <div className={styles.videoSlider}>
       <Range
@@ -25,18 +43,7 @@ function VideoSlider({
         tipFormatter={value => `${value}`}
         step={0.01}
         pushable={1}
-        onChange={(e) => {
-          const newStart = e[0];
-          const newEnd = e[1];
-          if (startTime.current !== newStart) {
-            startTime.current = newStart;
-            onStartChange(startTime.current);
-          }
-          if (endTime.current !== newEnd) {
-            endTime.current = newEnd;
-            onEndChange(endTime.current);
-          }
-        }}
+        onChange={onChange}
       />
     </div>
   );
