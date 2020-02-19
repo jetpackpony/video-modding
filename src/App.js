@@ -1,6 +1,7 @@
-import React, { useReducer } from 'react';
+import React, { useReducer, useRef, useEffect, useState } from 'react';
 import './App.css';
 import reddit from './reddit-api';
+import HLS from 'hls.js';
 
 const initialState = {
   videos: [],
@@ -27,7 +28,6 @@ function App() {
   const [state, dispatch] = useReducer(reducer, initialState);
   const needsToLoadVideos = state.videos.length === 0 || state.videos.length === (state.currentId + 1);
   
-  console.log("Rendering: ", state);
   if (needsToLoadVideos) {
     console.log("Loading videos. Mocking API: ", process.env.REACT_APP_MOCK_API);
     (
@@ -40,6 +40,7 @@ function App() {
               subreddit: "WatchPeopleDieInside"
             })
     ).then((list) => {
+      console.log("Videos list: ", list);
       dispatch({ type: "SET_NEW_VIDEOS", videos: list });
     })
     .catch((e) => console.log("Error: ", e));
@@ -49,7 +50,7 @@ function App() {
     <>
       {
         (state.videos[state.currentId])
-          ? <video autoPlay controls src={state.videos[state.currentId].media.reddit_video.fallback_url} width={1024} height={576}></video>
+          ? <Player key={state.videos[state.currentId].name} video={state.videos[state.currentId]}/>
           : "Loading..."
       }
       <button onClick={() => dispatch({ type: "SHOW_NEXT" })}>
@@ -58,5 +59,23 @@ function App() {
     </>
   );
 }
+
+function Player({ video }) {
+  const hlsURL = video.media.reddit_video.hls_url;
+  const videoEl = useRef(null);
+
+  useEffect(() => {
+    const hls = new HLS();
+    hls.loadSource(hlsURL);
+    hls.attachMedia(videoEl.current);
+    hls.on(HLS.Events.MANIFEST_PARSED, function () {
+      // videoEl.current.play();
+    });
+  }, [hlsURL]);
+
+  return (
+    <video ref={videoEl} controls width={1024} height={576}></video>
+  );
+};
 
 export default App;
