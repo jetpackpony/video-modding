@@ -3,16 +3,9 @@ import 'rc-tooltip/assets/bootstrap.css';
 import React, { useRef } from 'react';
 import Slider from 'rc-slider';
 import styles from './Player.module.css';
+import { debounce } from '../utils';
 
 const Range = Slider.createSliderWithTooltip(Slider.Range);
-
-const debounce = (callback, timeout = 100) => {
-  let timeoutId;
-  return (...args) => {
-    clearTimeout(timeoutId);
-    timeoutId = setTimeout(() => callback.apply(null, args), timeout);
-  };
-};
 
 function VideoSlider({
   onStartChange,
