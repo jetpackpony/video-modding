@@ -20,6 +20,7 @@ function Player({ video }) {
   };
 
   useEffect(() => {
+    console.log("Updated videodata: ", videoData);
     const vid = videoEl.current;
     const onVideoReady = () => {
       // Only reset video data if it's the first time
@@ -115,6 +116,19 @@ function Player({ video }) {
     });
   };
 
+  const changeMusic = (fileName) => {
+    dispatch({
+      type: actions.SET_MUSIC_FILE,
+      fileName
+    });
+  };
+  const changeMusicRange = (start) => {
+    dispatch({
+      type: actions.SET_MUSIC_RANGE,
+      start
+    });
+  };
+
   return (
     <>
       <video ref={videoEl} controls autoPlay width={1024} height={576}></video>
@@ -141,6 +155,10 @@ function Player({ video }) {
               <SoundSelector
                 mute={mute}
                 unmute={unmute}
+                selectedMusicFile={videoData.selectedMusicFile}
+                musicRangeValue={videoData.musicRangeValue}
+                changeMusic={changeMusic}
+                changeMusicRange={changeMusicRange}
               />
             </>
           )

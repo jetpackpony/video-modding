@@ -5,7 +5,8 @@ export const initialState = {
   end: 0,
   isPlaying: false,
   isMuted: false,
-  audioOverlay: null
+  selectedMusicFile: "",
+  musicRangeValue: 0
 };
 
 export const actions = {
@@ -14,7 +15,8 @@ export const actions = {
   UPDATE_END: "UPDATE_END",
   SET_IS_PLAYING: "SET_IS_PLAYING",
   SET_MUTED: "SET_MUTED",
-  SET_AUDIO_OVERLAY: "SET_AUDIO_OVERLAY",
+  SET_MUSIC_FILE: "SET_MUSIC_FILE",
+  SET_MUSIC_RANGE: "SET_MUSIC_RANGE",
 };
 
 export const reducer = (state, action) => {
@@ -45,6 +47,16 @@ export const reducer = (state, action) => {
       return {
         ...state,
         isMuted: action.isMuted
+      };
+    case actions.SET_MUSIC_FILE:
+      return {
+        ...state,
+        selectedMusicFile: action.fileName,
+      };
+    case actions.SET_MUSIC_RANGE:
+      return {
+        ...state,
+        musicRangeValue: action.start
       };
     default:
       console.log("Unknown action in Player reducer: ", action, state);

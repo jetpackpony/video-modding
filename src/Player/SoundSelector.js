@@ -1,8 +1,13 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import MusicSelector from './MusicSelector';
 
 function SoundSelector({
   mute,
-  unmute
+  unmute,
+  selectedMusicFile,
+  musicRangeValue,
+  changeMusic,
+  changeMusicRange
 }) {
   const [selectedSetting, setSetting] = useState("original");
   const onSettingChange = (e) => {
@@ -54,6 +59,16 @@ function SoundSelector({
           onChange={onSettingChange}
         />
         <label htmlFor="add-music">replace with music</label>
+        {
+          (selectedSetting === "add-music")
+            ? <MusicSelector
+              selectedMusicFile={selectedMusicFile}
+              musicRangeValue={musicRangeValue}
+              changeMusic={changeMusic}
+              changeMusicRange={changeMusicRange}
+            />
+                  : null
+              }
       </div>
     </div>
   );
