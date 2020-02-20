@@ -2,6 +2,7 @@ import React, { useReducer } from 'react';
 import './App.css';
 import reddit from './reddit-api';
 import Player from './Player';
+import { saveVideoToDB } from './saveVideo';
 
 const initialState = {
   videos: [],
@@ -50,7 +51,11 @@ function App() {
     <>
       {
         (state.videos[state.currentId])
-          ? <Player key={state.videos[state.currentId].name} video={state.videos[state.currentId]}/>
+          ? <Player
+            key={state.videos[state.currentId].name}
+            video={state.videos[state.currentId]}
+            saveVideoToDB={saveVideoToDB}
+          />
           : "Loading..."
       }
       <button onClick={() => dispatch({ type: "SHOW_NEXT" })}>

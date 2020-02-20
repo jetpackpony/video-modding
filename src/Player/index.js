@@ -5,7 +5,7 @@ import ProgressBar from './ProgressBar';
 import SoundSelector from './SoundSelector';
 import { actions, initialState, reducer } from './playerReducer';
 
-function Player({ video }) {
+function Player({ video, saveVideoToDB }) {
   const hlsURL = video.media.reddit_video.hls_url;
   const videoEl = useRef(null);
   const [videoData, dispatch] = useReducer(reducer, initialState);
@@ -164,6 +164,7 @@ function Player({ video }) {
           )
           : null
       }
+      <button onClick={() => saveVideoToDB(video, videoData)}>Save Video Data</button>
     </>
   );
 };
