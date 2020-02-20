@@ -1,13 +1,13 @@
-import React, { useRef, useEffect, useState } from 'react';
+import React, { useRef, useEffect, useState, useReducer } from 'react';
 import HLS from 'hls.js';
 import VideoSlider from './VideoSlider';
 import ProgressBar from './ProgressBar';
+import { actions, initialState, reducer } from './playerReducer';
 
 function Player({ video }) {
   const hlsURL = video.media.reddit_video.hls_url;
   const videoEl = useRef(null);
-  const [videoData, setVideoData] = useState({ duration: 0, start: 0, end: 0 });
-  const [isPlaying, setIsPlaying] = useState(false);
+  const [videoData, dispatch] = useReducer(reducer, initialState);
   const [currentTime, setCuttentTime] = useState(0);
 
   const play = () => { videoEl.current.play() };
@@ -19,15 +19,15 @@ function Player({ video }) {
   };
 
   useEffect(() => {
+    console.log("Creating listeners", videoData);
     const vid = videoEl.current;
     const onVideoReady = () => {
       // Only reset video data if it's the first time
       if (videoData.duration === 0) {
         const duration = Math.floor(videoEl.current.duration * 100) / 100;
-        setVideoData({
-          duration,
-          start: 0,
-          end: duration
+        dispatch({
+          type: actions.INIT_VIDEO,
+          duration
         });
       }
     };
@@ -42,8 +42,18 @@ function Player({ video }) {
       setCuttentTime(vid.currentTime);
     };
 
-    const onPlay = () => { setIsPlaying(true); };
-    const onPause = () => { setIsPlaying(false); };
+    const onPlay = () => {
+      dispatch({
+        type: actions.SET_IS_PLAYING,
+        isPlaying: true
+      });
+    };
+    const onPause = () => {
+      dispatch({
+        type: actions.SET_IS_PLAYING,
+        isPlaying: false
+      });
+    };
 
     vid.addEventListener("canplaythrough", onVideoReady);
     vid.addEventListener("timeupdate", onTimeUpdate);
@@ -72,18 +82,18 @@ function Player({ video }) {
     console.log("Start changed: ", newStart);
     changeTime(newStart);
     play();
-    setVideoData({
-      ...videoData,
-      start: newStart
+    dispatch({
+      type: actions.UPDATE_START,
+      newStart
     });
   };
   const onEndChange = (newEnd) => {
     console.log("End changed: ", newEnd);
     changeTime(newEnd - 1);
     play();
-    setVideoData({
-      ...videoData,
-      end: newEnd
+    dispatch({
+      type: actions.UPDATE_END,
+      newEnd
     });
   };
 
@@ -103,7 +113,7 @@ function Player({ video }) {
               />
               <ProgressBar
                 duration={videoData.duration}
-                isPlaying={isPlaying}
+                isPlaying={videoData.isPlaying}
                 changeTime={changeTime}
                 play={play}
                 pause={pause}
