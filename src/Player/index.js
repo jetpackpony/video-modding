@@ -2,6 +2,7 @@ import React, { useRef, useEffect, useState, useReducer } from 'react';
 import HLS from 'hls.js';
 import VideoSlider from './VideoSlider';
 import ProgressBar from './ProgressBar';
+import SoundSelector from './SoundSelector';
 import { actions, initialState, reducer } from './playerReducer';
 
 function Player({ video }) {
@@ -99,6 +100,21 @@ function Player({ video }) {
     });
   };
 
+  const mute = () => {
+    videoEl.current.muted = true;
+    dispatch({
+      type: actions.SET_MUTED,
+      isMuted: true
+    });
+  };
+  const unmute = () => {
+    videoEl.current.muted = false;
+    dispatch({
+      type: actions.SET_MUTED,
+      isMuted: false
+    });
+  };
+
   return (
     <>
       <video ref={videoEl} controls autoPlay width={1024} height={576}></video>
@@ -121,6 +137,10 @@ function Player({ video }) {
                 pause={pause}
                 replay={replay}
                 currentTime={currentTime}
+              />
+              <SoundSelector
+                mute={mute}
+                unmute={unmute}
               />
             </>
           )

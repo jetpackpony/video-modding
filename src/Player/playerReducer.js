@@ -4,6 +4,8 @@ export const initialState = {
   start: 0,
   end: 0,
   isPlaying: false,
+  isMuted: false,
+  audioOverlay: null
 };
 
 export const actions = {
@@ -11,6 +13,8 @@ export const actions = {
   UPDATE_START: "UPDATE_START",
   UPDATE_END: "UPDATE_END",
   SET_IS_PLAYING: "SET_IS_PLAYING",
+  SET_MUTED: "SET_MUTED",
+  SET_AUDIO_OVERLAY: "SET_AUDIO_OVERLAY",
 };
 
 export const reducer = (state, action) => {
@@ -37,7 +41,13 @@ export const reducer = (state, action) => {
         ...state,
         isPlaying: action.isPlaying
       };
+    case actions.SET_MUTED:
+      return {
+        ...state,
+        isMuted: action.isMuted
+      };
     default:
-      throw new Error("Unknown action in Player reducer: ", action, state);
+      console.log("Unknown action in Player reducer: ", action, state);
+      throw new Error("Unknown action in Player reducer");
   }
 };
