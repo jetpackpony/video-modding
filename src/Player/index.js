@@ -10,6 +10,7 @@ function Player({ video, saveVideoToDB }) {
   const videoEl = useRef(null);
   const [videoData, dispatch] = useReducer(reducer, initialState);
   const [currentTime, setCuttentTime] = useState(0);
+  const [savingVideo, setSavingVideo] = useState(false);
 
   const play = () => { videoEl.current.play() };
   const pause = () => { videoEl.current.pause() };
@@ -129,6 +130,14 @@ function Player({ video, saveVideoToDB }) {
     });
   };
 
+  const onSaveVideo = () => {
+    setSavingVideo(true);
+    saveVideoToDB(video, videoData)
+      .finally(() => {
+        setSavingVideo(false);
+      });
+  };
+
   return (
     <>
       <video ref={videoEl} controls autoPlay width={1024} height={576}></video>
@@ -164,7 +173,16 @@ function Player({ video, saveVideoToDB }) {
           )
           : null
       }
-      <button onClick={() => saveVideoToDB(video, videoData)}>Save Video Data</button>
+      <button
+        onClick={onSaveVideo}
+        disabled={savingVideo}
+      >
+        {
+          (savingVideo)
+            ? "Saving..."
+            : "Save Video Data"
+        }
+      </button>
     </>
   );
 };
