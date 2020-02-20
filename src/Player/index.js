@@ -19,7 +19,6 @@ function Player({ video }) {
   };
 
   useEffect(() => {
-    console.log("Creating listeners", videoData);
     const vid = videoEl.current;
     const onVideoReady = () => {
       // Only reset video data if it's the first time
@@ -82,10 +81,13 @@ function Player({ video }) {
     console.log("Start changed: ", newStart);
     changeTime(newStart);
     play();
-    dispatch({
-      type: actions.UPDATE_START,
-      newStart
-    });
+    setTimeout(
+      () => dispatch({
+        type: actions.UPDATE_START,
+        newStart
+      }),
+      0
+    );
   };
   const onEndChange = (newEnd) => {
     console.log("End changed: ", newEnd);
