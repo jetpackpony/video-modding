@@ -14,10 +14,11 @@ function connect() {
       console.log("Connected successfully to server");
 
       const db = client.db(dbName);
-      const col= db.collection('redditVideos');
+      const videosCol = db.collection('redditVideos');
+      const anchorCol = db.collection('redditVideosAnchors');
 
       ipcMain.on('save-video-data', (event, video) => {
-        col.updateOne(
+        videosCol.updateOne(
           { id: video.id },
           { $set: video },
           { upsert: true },
@@ -31,6 +32,65 @@ function connect() {
             }
             event.reply('save-video-data-result', {
               success: true
+            });
+            return;
+          });
+      });
+
+      ipcMain.on('save-list-anchor', (event, { id, anchorType }) => {
+        anchorCol.updateOne(
+          { anchorType },
+          { $set: { id } },
+          { upsert: true },
+          (err, result) => {
+            if (err) {
+              event.reply('save-list-anchor-result', {
+                success: false,
+                err
+              });
+              return;
+            }
+            event.reply('save-list-anchor-result', {
+              success: true
+            });
+            return;
+          });
+      });
+
+      ipcMain.on('get-before-anchor', (event) => {
+        anchorCol.findOne(
+          { anchorType: "before" },
+          (err, result) => {
+            console.log("REES: ", result);
+            if (err) {
+              event.reply('get-before-anchor-result', {
+                success: false,
+                err
+              });
+              return;
+            }
+            event.reply('get-before-anchor-result', {
+              success: true,
+              id: result.id
+            });
+            return;
+          });
+      });
+
+      ipcMain.on('get-after-anchor', (event) => {
+        anchorCol.findOne(
+          { anchorType: "after" },
+          (err, result) => {
+            if (err) {
+              event.reply('get-after-anchor-result', {
+                success: false,
+                err
+              });
+              return;
+            }
+            event.reply('get-after-anchor-result', {
+              success: true,
+              id: result.id
             });
             return;
           });

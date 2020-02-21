@@ -1,9 +1,9 @@
 require('dotenv').config();
 const snoowrap = require('snoowrap');
 
-const getVideos = (r) => ({ subreddit, after = null }) => {
+const getVideos = (r) => ({ subreddit, before = null, after = null }) => {
   return r.getSubreddit(subreddit)
-    .getHot({ after })
+    .getHot({ before, after })
     .filter((post) => post.is_reddit_media_domain && post.is_video);
 };
 

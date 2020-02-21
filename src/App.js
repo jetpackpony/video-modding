@@ -2,11 +2,12 @@ import React, { useReducer } from 'react';
 import './App.css';
 import reddit from './reddit-api';
 import Player from './Player';
-import { saveVideoToDB } from './saveVideo';
+import { saveVideoToDB, getBeforeAnchor, getAfterAnchor } from './saveVideo';
 
 const initialState = {
   videos: [],
-  currentId: 0
+  currentId: 0,
+  listType: "before-after"
 };
 const reducer = (state, action) => {
   switch (action.type) {
@@ -17,12 +18,50 @@ const reducer = (state, action) => {
       };
     case 'SET_NEW_VIDEOS':
       return {
+        ...state,
         videos: action.videos,
-        currentId: 0
+        currentId: 0,
+        listType: action.listType
+      };
+    case 'SET_LIST_TYPE':
+      return {
+        ...state,
+        listType: action.listType
       };
     default:
       throw new Error();
   }
+};
+
+const loadVideos = async () => {
+  const latestBefore = await getBeforeAnchor();
+  console.log("Before anchor: ", latestBefore);
+  if (latestBefore) {
+    const list = await reddit
+      .init()
+      .getVideos({
+        subreddit: "WatchPeopleDieInside",
+        before: latestBefore
+      });
+    if (list.length > 0) {
+      return { type: "before", list };
+    }
+  }
+
+  const latestAfter = await getAfterAnchor();
+  console.log("After anchor: ", latestAfter);
+  const list = await reddit
+    .init()
+    .getVideos({
+      subreddit: "WatchPeopleDieInside",
+      after: latestAfter || null
+    });
+  
+  if (!latestBefore && !latestAfter) {
+    return { type: "before-after", list };
+  }
+
+  return { type: "after", list };
 };
 
 function App() {
@@ -33,19 +72,24 @@ function App() {
     console.log("Loading videos. Mocking API: ", process.env.REACT_APP_MOCK_API);
     (
       // (process.env.REACT_APP_MOCK_API)
-      (true)
+      (false)
         ? import('./api_output.json').then((list) => list.default)
-        : reddit
-            .init()
-            .getVideos({
-              subreddit: "WatchPeopleDieInside"
-            })
-    ).then((list) => {
+        : loadVideos()
+    ).then(({ type, list }) => {
       console.log("Videos list: ", list);
-      dispatch({ type: "SET_NEW_VIDEOS", videos: list });
+      dispatch({ type: "SET_NEW_VIDEOS", videos: list, listType: type });
     })
     .catch((e) => console.log("Error: ", e));
   }
+
+  const saveVideoToDBWrap = (video, videoData) => {
+    return saveVideoToDB(video, videoData, state.listType)
+      .then(() => {
+        if (state.listType === "before-after") {
+          dispatch({ type: "SET_LIST_TYPE", listType: "after" });
+        }
+      });
+  };
 
   return (
     <>
@@ -54,7 +98,7 @@ function App() {
           ? <Player
             key={state.videos[state.currentId].name}
             video={state.videos[state.currentId]}
-            saveVideoToDB={saveVideoToDB}
+            saveVideoToDB={saveVideoToDBWrap}
           />
           : "Loading..."
       }

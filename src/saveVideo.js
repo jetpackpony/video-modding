@@ -16,7 +16,24 @@ const sendDataToDB = (data) => {
   })
 };
 
-export const saveVideoToDB = (video, videoData) => {
+const saveListAnchor = (listAnchor) => {
+  return new Promise((resolve, reject) => {
+    const onSaveListAnchorResult = (event, arg) => {
+      console.log("save-list-anchor-result", arg);
+      if (arg.success) {
+        resolve();
+      } else {
+        reject(arg.err);
+      }
+      ipcRenderer.removeListener('save-list-anchor-result', onSaveListAnchorResult);
+    };
+    ipcRenderer.on('save-list-anchor-result', onSaveListAnchorResult);
+    ipcRenderer.send('save-list-anchor', listAnchor);
+  })
+};
+
+
+export const saveVideoToDB = (video, videoData, anchorType) => {
   const data = {
     id: video.name,
     subreddit: video.subreddit,
@@ -39,10 +56,51 @@ export const saveVideoToDB = (video, videoData) => {
     }
   };
   console.log("Saving video: ", data);
+  console.log("Anchor type: ", anchorType);
   return sendDataToDB(data)
     .then(() => console.log("Saved video successfully"))
+    .then(() => (
+      (anchorType === "before-after")
+        ? Promise.all([
+          saveListAnchor({ id: video.name, anchorType: "before" }),
+          saveListAnchor({ id: video.name, anchorType: "after" })
+        ])
+        : saveListAnchor({ id: video.name, anchorType })
+      ))
     .catch((err) => {
       console.error("Error saving the video", err);
       alert("Error saving the video (check console)");
     });
+};
+
+export const getBeforeAnchor = () => {
+  return new Promise((resolve, reject) => {
+    const onAnchorResult = (event, arg) => {
+      console.log("get-before-anchor-result", arg);
+      if (arg.success) {
+        resolve(arg.id);
+      } else {
+        reject(arg.err);
+      }
+      ipcRenderer.removeListener('get-before-anchor-result', onAnchorResult);
+    };
+    ipcRenderer.on('get-before-anchor-result', onAnchorResult);
+    ipcRenderer.send('get-before-anchor', "get");
+  })
+};
+
+export const getAfterAnchor = () => {
+  return new Promise((resolve, reject) => {
+    const onAnchorResult = (event, arg) => {
+      console.log("get-after-anchor-result", arg);
+      if (arg.success) {
+        resolve(arg.id);
+      } else {
+        reject(arg.err);
+      }
+      ipcRenderer.removeListener('get-after-anchor-result', onAnchorResult);
+    };
+    ipcRenderer.on('get-after-anchor-result', onAnchorResult);
+    ipcRenderer.send('get-after-anchor', "get");
+  })
 };
