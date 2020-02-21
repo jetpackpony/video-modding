@@ -19,7 +19,11 @@ const reducer = (state, action) => {
     case 'SET_NEW_VIDEOS':
       return {
         ...state,
-        videos: action.videos,
+        videos: (
+          (action.listType === "before")
+            ? action.videos.slice().reverse()
+            : action.videos
+        ),
         currentId: 0,
         listType: action.listType
       };
@@ -72,11 +76,11 @@ function App() {
     console.log("Loading videos. Mocking API: ", process.env.REACT_APP_MOCK_API);
     (
       // (process.env.REACT_APP_MOCK_API)
-      (false)
-        ? import('./api_output_short.json').then((list) => ({ list: list.default, type: "after" }))
+      (true)
+        ? import('./api_output_short.json').then((list) => ({ list: list.default, type: "before" }))
         : loadVideos()
     ).then(({ type, list }) => {
-      console.log("Videos list: ", list);
+      console.log("Videos list: ", list, type);
       dispatch({ type: "SET_NEW_VIDEOS", videos: list, listType: type });
     })
     .catch((e) => console.log("Error: ", e));
