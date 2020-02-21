@@ -1,6 +1,9 @@
 require('dotenv').config();
 const MongoClient = require('mongodb').MongoClient;
-const { ipcMain } = require('electron');
+const { app, ipcMain } = require('electron');
+
+const isDev = () => !app.isPackaged;
+const devPrefix = (name) => `${isDev() ? "DEV" : ""}${name}`;
  
 const url = process.env.MONGODB_URI;
 const dbName = process.env.MONGODB_DB_NAME;
@@ -14,8 +17,8 @@ function connect() {
       console.log("Connected successfully to server");
 
       const db = client.db(dbName);
-      const videosCol = db.collection('redditVideos');
-      const anchorCol = db.collection('redditVideosAnchors');
+      const videosCol = db.collection(devPrefix("redditVideos"));
+      const anchorCol = db.collection(devPrefix("redditVideosAnchors"));
 
       ipcMain.on('save-video-data', (event, video) => {
         videosCol.updateOne(
@@ -71,7 +74,7 @@ function connect() {
             }
             event.reply('get-before-anchor-result', {
               success: true,
-              id: result.id
+              id: (result) ? result.id : null
             });
             return;
           });
@@ -90,7 +93,7 @@ function connect() {
             }
             event.reply('get-after-anchor-result', {
               success: true,
-              id: result.id
+              id: (result) ? result.id : null
             });
             return;
           });
