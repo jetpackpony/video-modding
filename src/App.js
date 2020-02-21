@@ -73,7 +73,7 @@ function App() {
     (
       // (process.env.REACT_APP_MOCK_API)
       (false)
-        ? import('./api_output.json').then((list) => list.default)
+        ? import('./api_output_short.json').then((list) => ({ list: list.default, type: "after" }))
         : loadVideos()
     ).then(({ type, list }) => {
       console.log("Videos list: ", list);
