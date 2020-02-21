@@ -66,7 +66,7 @@ const loadVideos = async () => {
 
 function App() {
   const [state, dispatch] = useReducer(reducer, initialState);
-  const needsToLoadVideos = state.videos.length === 0 || state.videos.length === (state.currentId + 1);
+  const needsToLoadVideos = state.videos.length === 0 || ((state.currentId + 1) > state.videos.length);
   
   if (needsToLoadVideos) {
     console.log("Loading videos. Mocking API: ", process.env.REACT_APP_MOCK_API);
