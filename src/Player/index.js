@@ -5,7 +5,7 @@ import ProgressBar from './ProgressBar';
 import SoundSelector from './SoundSelector';
 import { actions, initialState, reducer } from './playerReducer';
 
-function Player({ video, saveVideoToDB }) {
+function Player({ video, saveVideoToDB, skipVideo }) {
   const hlsURL = video.media.reddit_video.hls_url;
   const videoEl = useRef(null);
   const [videoData, dispatch] = useReducer(reducer, initialState);
@@ -133,6 +133,14 @@ function Player({ video, saveVideoToDB }) {
       });
   };
 
+  const onSkipVideo = () => {
+    setSavingVideo(true);
+    skipVideo(video)
+      .finally(() => {
+        setSavingVideo(false);
+      });
+  };
+
   return (
     <>
       <video ref={videoEl} controls autoPlay width={1024} height={576}></video>
@@ -176,6 +184,16 @@ function Player({ video, saveVideoToDB }) {
           (savingVideo)
             ? "Saving..."
             : "Save Video Data"
+        }
+      </button>
+      <button
+        onClick={onSkipVideo}
+        disabled={savingVideo}
+      >
+        {
+          (savingVideo)
+            ? "Saving..."
+            : "Skip Video"
         }
       </button>
     </>

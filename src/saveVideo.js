@@ -73,6 +73,23 @@ export const saveVideoToDB = (video, videoData, anchorType) => {
     });
 };
 
+export const skipVideo = (video, anchorType) => {
+  const id = video.name;
+  console.log("Anchor type: ", anchorType);
+  return (
+    (anchorType === "before-after")
+      ? Promise.all([
+        saveListAnchor({ id, anchorType: "before" }),
+        saveListAnchor({ id, anchorType: "after" })
+      ])
+      : saveListAnchor({ id, anchorType })
+  )
+    .catch((err) => {
+      console.error("Error saving the video", err);
+      alert("Error saving the video (check console)");
+    });
+};
+
 export const getBeforeAnchor = () => {
   return new Promise((resolve, reject) => {
     const onAnchorResult = (event, arg) => {

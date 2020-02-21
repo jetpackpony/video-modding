@@ -2,7 +2,12 @@ import React, { useReducer } from 'react';
 import './App.css';
 import reddit from './reddit-api';
 import Player from './Player';
-import { saveVideoToDB, getBeforeAnchor, getAfterAnchor } from './saveVideo';
+import {
+  saveVideoToDB,
+  skipVideo,
+  getBeforeAnchor,
+  getAfterAnchor
+} from './saveVideo';
 
 const initialState = {
   videos: [],
@@ -76,7 +81,7 @@ function App() {
     console.log("Loading videos. Mocking API: ", process.env.REACT_APP_MOCK_API);
     (
       // (process.env.REACT_APP_MOCK_API)
-      (true)
+      (false)
         ? import('./api_output_short.json').then((list) => ({ list: list.default, type: "before" }))
         : loadVideos()
     ).then(({ type, list }) => {
@@ -95,6 +100,15 @@ function App() {
       });
   };
 
+  const skipVideoWrap = (video) => {
+    return skipVideo(video, state.listType)
+      .then(() => {
+        if (state.listType === "before-after") {
+          dispatch({ type: "SET_LIST_TYPE", listType: "after" });
+        }
+      });
+  };
+
   return (
     <>
       {
@@ -103,6 +117,7 @@ function App() {
             key={state.videos[state.currentId].name}
             video={state.videos[state.currentId]}
             saveVideoToDB={saveVideoToDBWrap}
+            skipVideo={skipVideoWrap}
           />
           : "Loading..."
       }
