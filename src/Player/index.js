@@ -21,7 +21,6 @@ function Player({ video, saveVideoToDB }) {
   };
 
   useEffect(() => {
-    console.log("Updated videodata: ", videoData);
     const vid = videoEl.current;
     const onVideoReady = () => {
       // Only reset video data if it's the first time
@@ -71,17 +70,14 @@ function Player({ video, saveVideoToDB }) {
 
   // Load HLS data into video element
   useEffect(() => {
-    console.log("Loading video");
     const hls = new HLS();
     hls.loadSource(hlsURL);
     hls.attachMedia(videoEl.current);
     hls.on(HLS.Events.MANIFEST_PARSED, function () {
-      console.log("Manifest parsed");
     });
   }, [hlsURL]);
 
   const onStartChange = (newStart) => {
-    console.log("Start changed: ", newStart);
     changeTime(newStart);
     play();
     setTimeout(
@@ -93,7 +89,6 @@ function Player({ video, saveVideoToDB }) {
     );
   };
   const onEndChange = (newEnd) => {
-    console.log("End changed: ", newEnd);
     changeTime(newEnd - 1);
     play();
     dispatch({

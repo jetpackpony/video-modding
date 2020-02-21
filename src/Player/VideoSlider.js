@@ -1,6 +1,6 @@
 import 'rc-slider/assets/index.css';
 import 'rc-tooltip/assets/bootstrap.css';
-import React, { useRef } from 'react';
+import React from 'react';
 import Slider from 'rc-slider';
 import styles from './Player.module.css';
 import { debounce } from '../utils';
