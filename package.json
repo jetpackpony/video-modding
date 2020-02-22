@@ -2,13 +2,14 @@
   "name": "video-modding",
   "version": "0.1.0",
   "private": true,
-  "main": "main.js",
+  "main": "electron/main.js",
+  "homepage": "./",
   "dependencies": {
     "@testing-library/jest-dom": "^4.2.4",
     "@testing-library/react": "^9.3.2",
     "@testing-library/user-event": "^7.1.2",
     "dotenv": "^8.2.0",
-    "electron": "^8.0.1",
+    "electron-is-dev": "^1.1.0",
     "hls.js": "^0.13.1",
     "mongodb": "^3.5.3",
     "rc-slider": "^9.2.1",
@@ -18,11 +19,15 @@
     "snoowrap": "^1.20.1"
   },
   "scripts": {
-    "electron": "electron .",
+    "electron": "ELECTRON_DISABLE_SECURITY_WARNINGS=true electron .",
     "start": "BROWSER=none react-scripts start",
-    "build": "react-scripts build",
     "test": "react-scripts test",
-    "eject": "react-scripts eject"
+    "eject": "react-scripts eject",
+    "build:react": "react-scripts build",
+    "build:electron": "mkdir -p build/src && cp -r electron/. build/electron && cp -r src/shared/. build/src/shared",
+    "package": "electron-builder build --mac -c.extraMetadata.main=build/electron/main.js --publish never",
+    "build": "yarn build:react && yarn build:electron && yarn package",
+    "debug:packaged": "open dist/mac/Video\\ Modding.app/Contents/MacOS/Video\\ Modding"
   },
   "eslintConfig": {
     "extends": "react-app"
@@ -38,5 +43,34 @@
       "last 1 firefox version",
       "last 1 safari version"
     ]
+  },
+  "devDependencies": {
+    "electron": "^8.0.1",
+    "electron-builder": "^22.3.2",
+    "typescript": "^3.8.2"
+  },
+  "author": {
+    "name": "Pony",
+    "email": "pony@pony.com",
+    "url": "https://jetpackpony.tech"
+  },
+  "build": {
+    "appId": "tech.jetpackpony.video-modding",
+    "productName": "Video Modding",
+    "copyright": "Copyright © 2020 ${author}",
+    "mac": {
+      "category": "public.app-category.utilities",
+      "target": "dir"
+    },
+    "files": [
+      "build/**/*",
+      "node_modules/**/*",
+      ".env"
+    ],
+    "directories": {
+      "buildResources": "assets"
+    },
+    "compression": "store",
+    "extends": null
   }
 }

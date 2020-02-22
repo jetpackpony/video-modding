@@ -3,7 +3,7 @@ import 'rc-tooltip/assets/bootstrap.css';
 import React from 'react';
 import Slider from 'rc-slider';
 import styles from './Player.module.css';
-import { debounce } from '../utils';
+import { debounce } from '../shared/utils';
 
 const Range = Slider.createSliderWithTooltip(Slider.Range);
 

@@ -1,6 +1,7 @@
-require('dotenv').config();
 const { app, BrowserWindow } = require('electron');
-const mongo = require('./src/mongo');
+const mongo = require('./mongo');
+const isDev = require('electron-is-dev');
+const path = require('path');
 
 function createWindow () {
   // Create the browser window.
@@ -15,7 +16,8 @@ function createWindow () {
 
   // and load the index.html of the app.
   // win.loadFile('index.html');
-  win.loadURL('http://localhost:3000/');
+  win.loadURL(isDev ? 'http://localhost:3000' : `file://${path.join(__dirname, '../index.html')}`);
+  
 
   // Open the DevTools.
   win.webContents.openDevTools();

@@ -8,6 +8,8 @@ import {
   getBeforeAnchor,
   getAfterAnchor
 } from './saveVideo';
+const isDev = window.require('electron-is-dev');
+console.log("RUNNING DEV: ", isDev);
 
 const initialState = {
   videos: [],
@@ -78,10 +80,10 @@ function App() {
   const needsToLoadVideos = state.videos.length === 0 || ((state.currentId + 1) > state.videos.length);
   
   if (needsToLoadVideos) {
-    console.log("Loading videos. Mocking API: ", process.env.REACT_APP_MOCK_API);
+    const isMockAPI = isDev && (process.env.REACT_APP_MOCK_API === "true");
+    console.log("Loading videos. Mocking API: ", isMockAPI);
     (
-      // (process.env.REACT_APP_MOCK_API)
-      (false)
+      (isMockAPI)
         ? import('./api_output_short.json').then((list) => ({ list: list.default, type: "before" }))
         : loadVideos()
     ).then(({ type, list }) => {

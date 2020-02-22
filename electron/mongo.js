@@ -1,12 +1,14 @@
-require('dotenv').config();
 const MongoClient = require('mongodb').MongoClient;
-const { app, ipcMain } = require('electron');
+const { ipcMain } = require('electron');
+const isDev = require('electron-is-dev');
+const env = require('./.env.json');
 
-const isDev = () => !app.isPackaged;
-const devPrefix = (name) => `${isDev() ? "DEV" : ""}${name}`;
+const devPrefix = (name) => `${isDev ? "DEV" : ""}${name}`;
+
+console.log("Environment: ", env);
  
-const url = process.env.MONGODB_URI;
-const dbName = process.env.MONGODB_DB_NAME;
+const url = env.MONGODB_URI;
+const dbName = env.MONGODB_DB_NAME;
 function connect() {
   return new Promise((resolve, reject) => {
     console.log("Connecting to: ", url);
