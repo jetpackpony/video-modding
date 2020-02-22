@@ -7,6 +7,10 @@ const getVideos = (r) => ({ subreddit, before = null, after = null }) => {
     .filter((post) => post.is_reddit_media_domain && post.is_video);
 };
 
+const getSubmission = (r) => (id) => {
+  return r.getSubmission(id).fetch();
+};
+
 const init = () => {
   const r = new snoowrap({
     userAgent: 'MyApp/1.0.0 (https://www.reddit.com/user/jetpackpony/)',
@@ -17,7 +21,8 @@ const init = () => {
   });
 
   return {
-    getVideos: getVideos(r)
+    getVideos: getVideos(r),
+    getSubmission: getSubmission(r)
   };
 };
 

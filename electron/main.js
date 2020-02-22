@@ -30,6 +30,7 @@ function createWindow () {
 app
   .whenReady()
   .then(mongo.connect)
+  .then(mongo.addIPCChannels)
   .then(createWindow);
 
 // Quit when all windows are closed.
