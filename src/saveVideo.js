@@ -36,7 +36,7 @@ const saveListAnchor = (listAnchor) => {
 export const saveVideoToDB = (video, videoData, anchorType) => {
   const data = {
     id: video.name,
-    subreddit: video.subreddit,
+    subreddit: video.subreddit_name_prefixed,
     title: video.title,
     is_reddit_media_domain: video.is_reddit_media_domain,
     thumbnail: video.thumbnail,
