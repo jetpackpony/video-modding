@@ -6,7 +6,8 @@ export const initialState = {
   isPlaying: false,
   isMuted: false,
   selectedMusicFile: "",
-  musicRangeValue: 0
+  musicRangeValue: 0,
+  screenshots: []
 };
 
 export const actions = {
@@ -17,7 +18,8 @@ export const actions = {
   SET_MUTED: "SET_MUTED",
   SET_MUSIC_FILE: "SET_MUSIC_FILE",
   SET_MUSIC_RANGE: "SET_MUSIC_RANGE",
-  RESET_MUSIC: "RESET_MUSIC"
+  RESET_MUSIC: "RESET_MUSIC",
+  ADD_SCREENSHOT: "ADD_SCREENSHOT"
 };
 
 export const reducer = (state, action) => {
@@ -64,6 +66,14 @@ export const reducer = (state, action) => {
         ...state,
         selectedMusicFile: "",
         musicRangeValue: 0
+      };
+    case actions.ADD_SCREENSHOT:
+      return {
+        ...state,
+        screenshots: [
+          ...state.screenshots,
+          action.currentTime
+        ]
       };
     default:
       console.log("Unknown action in Player reducer: ", action, state);

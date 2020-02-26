@@ -144,6 +144,13 @@ function Player({ video, saveVideoToDB, skipVideo }) {
       });
   };
 
+  const onAddScreenshot = () => {
+    dispatch({
+      type: actions.ADD_SCREENSHOT,
+      currentTime
+    });
+  };
+
   return (
     <>
       <video ref={videoEl} controls autoPlay width={1024} height={576}></video>
@@ -181,6 +188,11 @@ function Player({ video, saveVideoToDB, skipVideo }) {
           )
           : null
       }
+      <button
+        onClick={onAddScreenshot}
+      >
+        Add Screenshot
+      </button>
       <button
         onClick={onSaveVideo}
         disabled={savingVideo}
