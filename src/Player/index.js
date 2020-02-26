@@ -99,16 +99,14 @@ function Player({ video, saveVideoToDB, skipVideo }) {
 
   const mute = () => {
     videoEl.current.muted = true;
-    dispatch({
-      type: actions.SET_MUTED,
-      isMuted: true
-    });
   };
   const unmute = () => {
     videoEl.current.muted = false;
+  };
+  const setIsMuted = (isMuted) => {
     dispatch({
       type: actions.SET_MUTED,
-      isMuted: false
+      isMuted
     });
   };
 
@@ -124,6 +122,11 @@ function Player({ video, saveVideoToDB, skipVideo }) {
       start
     });
   };
+  const removeMusic = () => {
+    dispatch({
+      type: actions.RESET_MUSIC
+    });
+  }
 
   const onSaveVideo = () => {
     setSavingVideo(true);
@@ -167,10 +170,12 @@ function Player({ video, saveVideoToDB, skipVideo }) {
               <SoundSelector
                 mute={mute}
                 unmute={unmute}
+                setIsMuted={setIsMuted}
                 selectedMusicFile={videoData.selectedMusicFile}
                 musicRangeValue={videoData.musicRangeValue}
                 changeMusic={changeMusic}
                 changeMusicRange={changeMusicRange}
+                removeMusic={removeMusic}
               />
             </>
           )

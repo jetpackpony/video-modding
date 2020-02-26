@@ -4,23 +4,33 @@ import MusicSelector from './MusicSelector';
 function SoundSelector({
   mute,
   unmute,
+  setIsMuted,
   selectedMusicFile,
   musicRangeValue,
   changeMusic,
-  changeMusicRange
+  changeMusicRange,
+  removeMusic
 }) {
   const [selectedSetting, setSetting] = useState("original");
   const onSettingChange = (e) => {
     const val = e.target.value;
     switch(val) {
       case "mute":
+        mute();
+        setIsMuted(true);
+        removeMusic();
+        break;
       case "add-music":
         mute();
+        setIsMuted(false);
         break;
       case "original":
-      default:
         unmute();
+        setIsMuted(false);
+        removeMusic();
         break;
+      default:
+        throw Error(`Bad sound setting: '${val}'`)
     }
     setSetting(val);
   };

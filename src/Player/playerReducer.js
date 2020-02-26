@@ -17,6 +17,7 @@ export const actions = {
   SET_MUTED: "SET_MUTED",
   SET_MUSIC_FILE: "SET_MUSIC_FILE",
   SET_MUSIC_RANGE: "SET_MUSIC_RANGE",
+  RESET_MUSIC: "RESET_MUSIC"
 };
 
 export const reducer = (state, action) => {
@@ -57,6 +58,12 @@ export const reducer = (state, action) => {
       return {
         ...state,
         musicRangeValue: action.start
+      };
+    case actions.RESET_MUSIC:
+      return {
+        ...state,
+        selectedMusicFile: "",
+        musicRangeValue: 0
       };
     default:
       console.log("Unknown action in Player reducer: ", action, state);
