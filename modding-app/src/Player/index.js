@@ -4,6 +4,8 @@ import VideoSlider from './VideoSlider';
 import ProgressBar from './ProgressBar';
 import SoundSelector from './SoundSelector';
 import { actions, initialState, reducer } from './playerReducer';
+import styles from './Player.module.css';
+import PlayButtons from './PlayButtons';
 
 function Player({ video, saveVideoToDB, skipVideo }) {
   const hlsURL = video.media.reddit_video.hls_url;
@@ -152,28 +154,59 @@ function Player({ video, saveVideoToDB, skipVideo }) {
   };
 
   return (
-    <>
-      <video ref={videoEl} controls autoPlay width={1024} height={576}></video>
+    <div className={styles.player}>
+      <div className={styles.videoWrapper}>
+        <video ref={videoEl} controls autoPlay></video>
+      </div>
+      <div>
+        <button onClick={onAddScreenshot}>
+          Add Screenshot
+        </button>
+        <button
+          onClick={onSaveVideo}
+          disabled={savingVideo}
+        >
+          {
+            (savingVideo)
+              ? "Saving..."
+              : "Save Video Data"
+          }
+        </button>
+        <button
+          onClick={onSkipVideo}
+          disabled={savingVideo}
+        >
+          {
+            (savingVideo)
+              ? "Saving..."
+              : "Skip Video"
+          }
+        </button>
+      </div>
       {
         (videoData.duration > 0)
           ? (
             <>
-              <VideoSlider
-                duration={videoData.duration}
-                startTime={videoData.start}
-                endTime={videoData.end}
-                onStartChange={onStartChange}
-                onEndChange={onEndChange}
-              />
-              <ProgressBar
-                duration={videoData.duration}
-                isPlaying={videoData.isPlaying}
-                changeTime={changeTime}
-                play={play}
-                pause={pause}
-                replay={replay}
-                currentTime={currentTime}
-              />
+              <div className={styles.controls}>
+                <PlayButtons
+                  isPlaying={videoData.isPlaying}
+                  play={play}
+                  pause={pause}
+                  replay={replay}
+                />
+                <VideoSlider
+                  duration={videoData.duration}
+                  startTime={videoData.start}
+                  endTime={videoData.end}
+                  onStartChange={onStartChange}
+                  onEndChange={onEndChange}
+                />
+                <ProgressBar
+                  duration={videoData.duration}
+                  changeTime={changeTime}
+                  currentTime={currentTime}
+                />
+              </div>
               <SoundSelector
                 mute={mute}
                 unmute={unmute}
@@ -188,32 +221,7 @@ function Player({ video, saveVideoToDB, skipVideo }) {
           )
           : null
       }
-      <button
-        onClick={onAddScreenshot}
-      >
-        Add Screenshot
-      </button>
-      <button
-        onClick={onSaveVideo}
-        disabled={savingVideo}
-      >
-        {
-          (savingVideo)
-            ? "Saving..."
-            : "Save Video Data"
-        }
-      </button>
-      <button
-        onClick={onSkipVideo}
-        disabled={savingVideo}
-      >
-        {
-          (savingVideo)
-            ? "Saving..."
-            : "Skip Video"
-        }
-      </button>
-    </>
+    </div>
   );
 };
 

@@ -3,11 +3,7 @@ import styles from './Player.module.css';
 
 function ProgressBar({
   duration,
-  isPlaying,
   changeTime,
-  play,
-  pause,
-  replay,
   currentTime
 }) {
   const progress = Math.round((currentTime / duration) * 100);
@@ -18,17 +14,9 @@ function ProgressBar({
   };
 
   return (
-    <div>
-      <div className={styles.progressBar} onClick={onProgressClick}>
-        <div className={styles.progressBarInner} style={{ width: `${progress}%`}}>
-        </div>
+    <div className={styles.progressBar} onClick={onProgressClick}>
+      <div className={styles.progressBarInner} style={{ width: `${progress}%` }}>
       </div>
-      {
-        (isPlaying)
-          ? <button onClick={pause}>Pause</button>
-          : <button onClick={play}>Play</button>
-      }
-      <button onClick={replay}>Replay</button>
     </div>
   );
 }
