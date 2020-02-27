@@ -65,7 +65,6 @@ function Player({
         isPlaying: false
       });
     };
-
     vid.addEventListener("canplaythrough", onVideoReady);
     vid.addEventListener("timeupdate", onTimeUpdate);
     vid.addEventListener("play", onPlay);
@@ -77,6 +76,33 @@ function Player({
       vid.removeEventListener("pause", onPause);
     };
   }, [videoData]);
+
+  useEffect(() => {
+    const handler = (e) => {
+      switch (e.code) {
+        case "Space":
+          e.preventDefault();
+          (videoData.isPlaying) ? pause() : play();
+          break;
+        case "KeyJ":
+        case "ArrowLeft":
+          e.preventDefault();
+          changeTime(currentTime - ((videoData.isPlaying) ? 1 : 0.1));
+          break;
+        case "KeyK":
+        case "ArrowRight":
+          e.preventDefault();
+          changeTime(currentTime + ((videoData.isPlaying) ? 1 : 0.1));
+          break;
+        default:
+      }
+    };
+
+    document.addEventListener("keydown", handler);
+    return () => {
+      document.removeEventListener("keydown", handler);
+    };
+  }, [videoData.isPlaying, currentTime]);
 
   // Load HLS data into video element
   useEffect(() => {
