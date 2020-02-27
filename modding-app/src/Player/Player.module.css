@@ -92,3 +92,7 @@ button:active {
   background-color: #424242;
 
 }
+
+input[type="radio"] {
+  margin: 0.3rem;
+}
