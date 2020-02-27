@@ -7,7 +7,15 @@ import { actions, initialState, reducer } from './playerReducer';
 import styles from './Player.module.css';
 import PlayButtons from './PlayButtons';
 
-function Player({ video, saveVideoToDB, skipVideo }) {
+function Player({
+  video,
+  saveVideoToDB,
+  skipVideo,
+  showNext,
+  currentVideo,
+  totalVideos
+}) {
+
   const hlsURL = video.media.reddit_video.hls_url;
   const videoEl = useRef(null);
   const [videoData, dispatch] = useReducer(reducer, initialState);
@@ -181,6 +189,9 @@ function Player({ video, saveVideoToDB, skipVideo }) {
               ? "Saving..."
               : "Skip Video"
           }
+        </button>
+        <button onClick={showNext}>
+          {currentVideo} / {totalVideos} Next >>
         </button>
       </div>
       {

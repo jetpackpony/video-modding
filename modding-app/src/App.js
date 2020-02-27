@@ -111,6 +111,8 @@ function App() {
       });
   };
 
+  const showNext = () => dispatch({ type: "SHOW_NEXT" });
+
   return (
     <>
       {
@@ -120,12 +122,12 @@ function App() {
             video={state.videos[state.currentId]}
             saveVideoToDB={saveVideoToDBWrap}
             skipVideo={skipVideoWrap}
+            showNext={showNext}
+            currentVideo={state.currentId + 1}
+            totalVideos={state.videos.length}
           />
           : "Loading..."
       }
-      <button onClick={() => dispatch({ type: "SHOW_NEXT" })}>
-        {state.currentId + 1} / {state.videos.length} Next >>
-      </button>
     </>
   );
 }
