@@ -19,33 +19,78 @@
 .controls {
   display: grid;
   grid-template-columns: min-content auto;
-  grid-template-rows: auto auto;
+  grid-template-rows: min-content auto;
   grid-template-areas: 
     "buttons slider"
     "buttons progress";
 }
 
 .progressBar {
-  height: 2rem;
+  height: 1.3rem;
   background-color: #575757;
-  margin: 2rem;
+  margin: 0.5rem 1rem 1rem 1rem;
   cursor: pointer;
   grid-area: progress;
 }
 .progressBarInner {
-  height: 2rem;
+  height: 100%;
   background-color: #7c7c7c;
 }
 
 .videoSlider {
-  margin: 2rem;
+  margin: 1rem 1rem 0.5rem 1rem;
   grid-area: slider;
 }
 
 .playButtons {
   grid-area: buttons;
+  white-space: nowrap;
+  padding: 1rem;
+}
+.playButtons button {
+  margin: 0.2rem;
 }
 
 .audioSlider {
-  margin: 2rem;
+  margin: 1rem;
+}
+
+.buttonsContainer {
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  padding: 2rem 0;
+}
+
+button {
+  padding: 0.5rem 1rem;
+  font-size: 16px;
+  color: white;
+  background-color: inherit;
+  border: 1px solid #6c6c6c;
+  margin: 0.5rem 2rem;
+  border-radius: 5px;
+  outline: none;
+  cursor: pointer;
+}
+
+button.green {
+  background-color: #376337;
+  border-color: #78d278;
+}
+button.green:active {
+  background-color: green;
+}
+
+button.red {
+  background-color: #6c3e3e;
+  border-color: #be7272;
+}
+button.red:active {
+  background-color: red;
+}
+
+button:active {
+  background-color: #424242;
+
 }

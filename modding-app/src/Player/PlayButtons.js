@@ -1,5 +1,6 @@
 import React from 'react';
 import styles from './Player.module.css';
+import { PlayArrow, Replay, Pause } from '@material-ui/icons';
 
 function PlayButtons({
   isPlaying,
@@ -11,10 +12,10 @@ function PlayButtons({
     <div className={styles.playButtons}>
       {
         (isPlaying)
-          ? <button onClick={pause}>Pause</button>
-          : <button onClick={play}>Play</button>
+          ? <button onClick={pause}><Pause/></button>
+          : <button onClick={play}><PlayArrow/></button>
       }
-      <button onClick={replay}>Replay</button>
+      <button onClick={replay}><Replay/></button>
     </div>
   );
 }

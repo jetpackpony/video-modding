@@ -166,13 +166,14 @@ function Player({
       <div className={styles.videoWrapper}>
         <video ref={videoEl} controls autoPlay></video>
       </div>
-      <div>
+      <div className={styles.buttonsContainer}>
         <button onClick={onAddScreenshot}>
           Add Screenshot
         </button>
         <button
           onClick={onSaveVideo}
           disabled={savingVideo}
+          className={styles.green}
         >
           {
             (savingVideo)
@@ -183,6 +184,7 @@ function Player({
         <button
           onClick={onSkipVideo}
           disabled={savingVideo}
+          className={styles.red}
         >
           {
             (savingVideo)
