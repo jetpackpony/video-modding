@@ -45,6 +45,7 @@ export const saveVideoToDB = (video, videoData, anchorType) => {
     permalink: video.permalink,
     url: video.url,
     screenshots: videoData.screenshots,
+    hls_url: video.media.reddit_video.hls_url,
     media: {
       fallback_url: video.media.reddit_video.fallback_url,
       height: video.media.reddit_video.height,
