@@ -30,7 +30,7 @@ for vid in get_unused_videos():
     col_name = datetime.datetime.now().strftime("%d_%b_%Y_%H_%M_%S") + "_" + str(randrange(10000))
     out_filename = col_name + ".json"
     create_file_and_dir(collections_path, out_filename)
-    vid_keys = ["id", "media", "title"]
+    vid_keys = ["id", "media", "title", "thumbnail", "screenshots"]
     out_vids = map(lambda vid: { key: vid[key] for key in vid_keys }, success_vids)
     collection = {
       "id": col_name,
