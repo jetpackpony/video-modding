@@ -7,6 +7,9 @@ import { actions, initialState, reducer } from './playerReducer';
 import styles from './Player.module.css';
 import PlayButtons from './PlayButtons';
 
+const rewindWhenPlaying = 1;
+const rewindWhenNotPlaying = 0.1;
+
 function Player({
   video,
   saveVideoToDB,
@@ -18,6 +21,7 @@ function Player({
 
   const hlsURL = video.media.reddit_video.hls_url;
   const videoEl = useRef(null);
+  const lastCallTime = useRef(Date.now());
   const [videoData, dispatch] = useReducer(reducer, initialState);
   const [currentTime, setCuttentTime] = useState(0);
   const [savingVideo, setSavingVideo] = useState(false);
@@ -78,7 +82,15 @@ function Player({
   }, [videoData]);
 
   useEffect(() => {
-    const handler = (e) => {
+    const isTimeToFireNextCall = () => {
+      if (lastCallTime.current && Date.now() - lastCallTime.current > 100) {
+        lastCallTime.current = Date.now();
+        return true;
+      }
+      return false;
+    };
+
+    const handlerDown = (e) => {
       switch (e.code) {
         case "Space":
           e.preventDefault();
@@ -87,20 +99,28 @@ function Player({
         case "KeyJ":
         case "ArrowLeft":
           e.preventDefault();
-          changeTime(currentTime - ((videoData.isPlaying) ? 1 : 0.1));
+          if (isTimeToFireNextCall()) {
+            changeTime(currentTime - (
+              (videoData.isPlaying) ? rewindWhenPlaying : rewindWhenNotPlaying
+            ));
+          }
           break;
         case "KeyK":
         case "ArrowRight":
           e.preventDefault();
-          changeTime(currentTime + ((videoData.isPlaying) ? 1 : 0.1));
+          if (isTimeToFireNextCall()) {
+            changeTime(currentTime + (
+              (videoData.isPlaying) ? rewindWhenPlaying : rewindWhenNotPlaying
+            ));
+          }
           break;
         default:
       }
     };
 
-    document.addEventListener("keydown", handler);
+    document.addEventListener("keydown", handlerDown);
     return () => {
-      document.removeEventListener("keydown", handler);
+      document.removeEventListener("keydown", handlerDown);
     };
   }, [videoData.isPlaying, currentTime]);
 
