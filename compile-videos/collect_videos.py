@@ -13,6 +13,16 @@ VIDEO_LENGTH = 60 * 10
 # Check if output dir exists and create it if not
 collections_path = "../../collections/" if is_prod() else "../../dev_collections/"
 
+vid_keys = ["id", "media", "title", "thumbnail", "screenshots"]
+def select_keys_from_vid(vid):
+  res = {}
+  for key in vid_keys:
+    if key in vid:
+      res[key] = vid[key]
+    else:
+      res[key] = None
+  return res
+
 # Collect videos from db to fill a video of length
 print("Start collecting videos from DB")
 collection_length = 0
@@ -30,8 +40,7 @@ for vid in get_unused_videos():
     col_name = datetime.datetime.now().strftime("%d_%b_%Y_%H_%M_%S") + "_" + str(randrange(10000))
     out_filename = col_name + ".json"
     create_file_and_dir(collections_path, out_filename)
-    vid_keys = ["id", "media", "title", "thumbnail", "screenshots"]
-    out_vids = map(lambda vid: { key: vid[key] for key in vid_keys }, success_vids)
+    out_vids = map(select_keys_from_vid, success_vids)
     collection = {
       "id": col_name,
       "length": collection_length,
