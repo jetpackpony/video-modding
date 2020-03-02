@@ -12,4 +12,4 @@ def create_dir(dir):
 
 
 if __name__ == "__main__":
-  create_file_and_dir("../dev", "test.json")
+  create_file_and_dir("../../dev", "test.json")

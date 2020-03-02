@@ -3,7 +3,7 @@ from env import is_prod
 import os.path
 from files import create_dir
 
-target_path = "../downloads/" if is_prod() else "../dev_downloads/"
+target_path = "../../downloads/" if is_prod() else "../../dev_downloads/"
 create_dir(target_path)
 
 #ffmpeg -y -i https://v.redd.it/ybcg6qv72oh41/HLSPlaylist.m3u8 -c copy -bsf:a aac_adtstoasc output.mp4

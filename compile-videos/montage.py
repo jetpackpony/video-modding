@@ -9,7 +9,7 @@ resolution = (1920, 1080)
 trans = VideoFileClip("transition_static_0.3sec.mp4")
 trans = pad_clip_to_size(resolution, trans)
 
-filename = "../collections/25_Feb_2020_17_34_23.json"
+filename = "../../collections/25_Feb_2020_17_34_23.json"
 collection = read_json(filename)
 
 clips = list(map(lambda info: process_clip(info, resolution), collection['videos']))

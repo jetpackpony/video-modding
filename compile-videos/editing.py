@@ -2,8 +2,8 @@ from moviepy.editor import *
 from env import is_prod
 import re
 
-videos_path = "../downloads/" if is_prod() else "../dev_downloads/"
-music_path = "../music/"
+videos_path = "../../downloads/" if is_prod() else "../../dev_downloads/"
+music_path = "../../music/"
 
 def get_real_audio_path(path):
   m = re.search('.+/([^/]+)', path)
