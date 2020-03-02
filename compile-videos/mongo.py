@@ -19,6 +19,9 @@ def get_unused_videos():
 def set_used_video(id):
   return vids_col.update_one({ "id": id }, { "$set": { "usedInVideo": True } }, upsert=True)
 
+def set_used_videos(ids):
+  return vids_col.update({ "id": { "$in": ids } }, { "$set": { "usedInVideo": True } }, upsert=True, multi=True)
+
 if __name__ == "__main__":
   for vid in get_vids_by_ids(["t3_f4wg9b", "t3_f5fin2", "t3_f5h6tw", "t3_f5hzeb"]):
     pprint(vid['media'])
