@@ -2,6 +2,7 @@ from pprint import pprint
 from moviepy.editor import *
 from json_ops import read_json
 from editing import *
+from screenshots import *
 from env import is_prod
 from files import create_dir, list_json_files, move_file
 
@@ -22,7 +23,12 @@ for filename in cols:
   dir_path = outputs_path + collection['id'] + "/"
   create_dir(dir_path)
 
-  clips = list(map(lambda info: process_clip(info, resolution), collection['videos']))
+  def process_video(info):
+    vid_path = videos_path + info['id'] + ".mp4"
+    make_screenshots(dir_path, vid_path, info['id'], info["screenshots"])
+    return process_clip(info, resolution)
+
+  clips = list(map(process_video, collection['videos']))
   out = concatenate_videoclips(clips, method="compose", transition=trans)
   out.write_videofile(dir_path + collection['id'] + ".mp4", threads = 4, fps = 30)
 
