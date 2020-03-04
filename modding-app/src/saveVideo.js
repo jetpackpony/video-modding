@@ -33,7 +33,7 @@ const saveListAnchor = (listAnchor) => {
 };
 
 
-export const saveVideoToDB = (video, videoData, anchorType) => {
+export const saveVideoToDB = (video, videoData, anchorType, subreddit, listType) => {
   const data = {
     id: video.name,
     subreddit: video.subreddit_name_prefixed,
@@ -64,10 +64,10 @@ export const saveVideoToDB = (video, videoData, anchorType) => {
     .then(() => (
       (anchorType === "before-after")
         ? Promise.all([
-          saveListAnchor({ id: video.name, anchorType: "before" }),
-          saveListAnchor({ id: video.name, anchorType: "after" })
+          saveListAnchor({ id: video.name, anchorType: "before", subreddit, listType }),
+          saveListAnchor({ id: video.name, anchorType: "after", subreddit, listType })
         ])
-        : saveListAnchor({ id: video.name, anchorType })
+        : saveListAnchor({ id: video.name, anchorType, subreddit, listType })
       ))
     .catch((err) => {
       console.error("Error saving the video", err);
@@ -75,16 +75,16 @@ export const saveVideoToDB = (video, videoData, anchorType) => {
     });
 };
 
-export const skipVideo = (video, anchorType) => {
+export const skipVideo = (video, anchorType, subreddit, listType) => {
   const id = video.name;
   console.log("Anchor type: ", anchorType);
   return (
     (anchorType === "before-after")
       ? Promise.all([
-        saveListAnchor({ id, anchorType: "before" }),
-        saveListAnchor({ id, anchorType: "after" })
+        saveListAnchor({ id, anchorType: "before", subreddit, listType }),
+        saveListAnchor({ id, anchorType: "after", subreddit, listType })
       ])
-      : saveListAnchor({ id, anchorType })
+      : saveListAnchor({ id, anchorType, subreddit, listType })
   )
     .catch((err) => {
       console.error("Error saving the video", err);
@@ -92,7 +92,7 @@ export const skipVideo = (video, anchorType) => {
     });
 };
 
-export const getBeforeAnchor = () => {
+export const getBeforeAnchor = (subreddit, listType) => {
   return new Promise((resolve, reject) => {
     const onAnchorResult = (event, arg) => {
       console.log("get-before-anchor-result", arg);
@@ -104,11 +104,11 @@ export const getBeforeAnchor = () => {
       ipcRenderer.removeListener('get-before-anchor-result', onAnchorResult);
     };
     ipcRenderer.on('get-before-anchor-result', onAnchorResult);
-    ipcRenderer.send('get-before-anchor', "get");
+    ipcRenderer.send('get-before-anchor', { subreddit, listType });
   })
 };
 
-export const getAfterAnchor = () => {
+export const getAfterAnchor = (subreddit, listType) => {
   return new Promise((resolve, reject) => {
     const onAnchorResult = (event, arg) => {
       console.log("get-after-anchor-result", arg);
@@ -120,6 +120,6 @@ export const getAfterAnchor = () => {
       ipcRenderer.removeListener('get-after-anchor-result', onAnchorResult);
     };
     ipcRenderer.on('get-after-anchor-result', onAnchorResult);
-    ipcRenderer.send('get-after-anchor', "get");
+    ipcRenderer.send('get-after-anchor', { subreddit, listType });
   })
 };

@@ -49,10 +49,10 @@ function addIPCChannels({ db, videosCol, anchorCol }) {
       });
   });
 
-  ipcMain.on('save-list-anchor', (event, { id, anchorType }) => {
+  ipcMain.on('save-list-anchor', (event, { id, anchorType, subreddit, listType }) => {
     anchorCol.updateOne(
-      { anchorType },
-      { $set: { id } },
+      { subreddit, listType },
+      { $set: { [anchorType]: id } },
       { upsert: true },
       (err, result) => {
         if (err) {
@@ -69,9 +69,9 @@ function addIPCChannels({ db, videosCol, anchorCol }) {
       });
   });
 
-  ipcMain.on('get-before-anchor', (event) => {
+  ipcMain.on('get-before-anchor', (event, { subreddit, listType }) => {
     anchorCol.findOne(
-      { anchorType: "before" },
+      { subreddit, listType },
       (err, result) => {
         console.log("REES: ", result);
         if (err) {
@@ -81,17 +81,19 @@ function addIPCChannels({ db, videosCol, anchorCol }) {
           });
           return;
         }
+        console.log("Result before", result);
         event.reply('get-before-anchor-result', {
           success: true,
-          id: (result) ? result.id : null
+          id: (result) ? result.before : null
         });
         return;
       });
   });
 
-  ipcMain.on('get-after-anchor', (event) => {
+  ipcMain.on('get-after-anchor', (event, { subreddit, listType }) => {
+    console.log("Req after", subreddit, listType);
     anchorCol.findOne(
-      { anchorType: "after" },
+      { subreddit, listType },
       (err, result) => {
         if (err) {
           event.reply('get-after-anchor-result', {
@@ -100,9 +102,10 @@ function addIPCChannels({ db, videosCol, anchorCol }) {
           });
           return;
         }
+        console.log("Result after", result);
         event.reply('get-after-anchor-result', {
           success: true,
-          id: (result) ? result.id : null
+          id: (result) ? result.after : null
         });
         return;
       });

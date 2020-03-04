@@ -51,7 +51,7 @@ const reducer = (state, action) => {
 };
 
 const loadVideos = async () => {
-  const latestBefore = await getBeforeAnchor();
+  const latestBefore = await getBeforeAnchor("WatchPeopleDieInside", "hot");
   console.log("Before anchor: ", latestBefore);
   if (latestBefore) {
     const list = await reddit
@@ -65,7 +65,7 @@ const loadVideos = async () => {
     }
   }
 
-  const latestAfter = await getAfterAnchor();
+  const latestAfter = await getAfterAnchor("WatchPeopleDieInside", "hot");
   console.log("After anchor: ", latestAfter);
   const list = await reddit
     .init()
@@ -108,7 +108,7 @@ function App() {
   }
 
   const saveVideoToDBWrap = (video, videoData) => {
-    return saveVideoToDB(video, videoData, state.listType)
+    return saveVideoToDB(video, videoData, state.listType, "WatchPeopleDieInside", "hot")
       .then(() => {
         if (state.listType === "before-after") {
           dispatch({ type: "SET_LIST_TYPE", listType: "after" });
@@ -117,7 +117,7 @@ function App() {
   };
 
   const skipVideoWrap = (video) => {
-    return skipVideo(video, state.listType)
+    return skipVideo(video, state.listType, "WatchPeopleDieInside", "hot")
       .then(() => {
         if (state.listType === "before-after") {
           dispatch({ type: "SET_LIST_TYPE", listType: "after" });
