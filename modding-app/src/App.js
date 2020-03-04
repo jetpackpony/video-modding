@@ -74,21 +74,21 @@ const loadVideos = async (subreddit, listingType) => {
   const latestBefore = await getBeforeAnchor(subreddit, listingType);
   console.log("Before anchor: ", latestBefore);
   if (latestBefore) {
-    const list = await reddit
+    const res = await reddit
       .init()
       .getVideos({
         subreddit: subreddit,
         before: latestBefore,
         listingType
       });
-    if (list.length > 0) {
-      return { type: "before", list, subreddit, listingType };
+    if (!res.done) {
+      return { type: "before", list: res.value, subreddit, listingType };
     }
   }
 
   const latestAfter = await getAfterAnchor(subreddit, listingType);
   console.log("After anchor: ", latestAfter);
-  const list = await reddit
+  const res = await reddit
     .init()
     .getVideos({
       subreddit: subreddit,
@@ -96,12 +96,13 @@ const loadVideos = async (subreddit, listingType) => {
       listingType
     });
   
-  if (list.length > 0) {
-    if (!latestBefore && !latestAfter) {
-      return { type: "before-after", list, subreddit, listingType };
-    }
-
-    return { type: "after", list, subreddit, listingType };
+  if (!res.done) {
+    return {
+      type: (!latestBefore && !latestAfter) ? "before-after" : "after",
+      list: res.value,
+      subreddit,
+      listingType
+    };
   } else {
     return null;
   }

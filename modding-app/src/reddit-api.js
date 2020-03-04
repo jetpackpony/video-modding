@@ -6,22 +6,32 @@ const LISTING_TYPES = {
   NEW: "NEW"
 };
 
-const isRedditVideo = (post) => post.is_reddit_media_domain && post.is_video;
-const getVideos = (r) => ({ subreddit, before = null, after = null, listingType = null }) => {
+const getAPIMethod = (listingType) => {
   switch (listingType) {
     case LISTING_TYPES.HOT:
-      console.log("Loading: ", subreddit, LISTING_TYPES.HOT);
-      return r.getSubreddit(subreddit)
-        .getHot({ before, after })
-        .filter(isRedditVideo);
+      return "getHot";
     case LISTING_TYPES.NEW:
-      console.log("Loading: ", subreddit, LISTING_TYPES.NEW);
-      return r.getSubreddit(subreddit)
-        .getNew({ before, after })
-        .filter(isRedditVideo);
+      return "getNew";
     default:
       throw new Error(`Unknown list type: ${listingType}`);
   };
+};
+const isRedditVideo = (post) => post.is_reddit_media_domain && post.is_video;
+const getVideos = (r) => ({ subreddit, before = null, after = null, listingType = null }) => {
+  return r.getSubreddit(subreddit)
+    [getAPIMethod(listingType)]({ before, after })
+    .then((res) => {
+      if (res.length > 0) {
+        return {
+          value: res.filter(isRedditVideo),
+          done: false
+        };
+      } else {
+        return {
+          done: true
+        };
+      }
+    });
 };
 
 const getSubmission = (r) => (id) => {
