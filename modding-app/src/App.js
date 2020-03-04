@@ -1,4 +1,4 @@
-import React, { useReducer } from 'react';
+import React, { useReducer, useRef } from 'react';
 import './App.css';
 import reddit from './reddit-api';
 import Player from './Player';
@@ -15,7 +15,9 @@ const initialState = {
   videos: [],
   currentId: 0,
   listType: "before-after",
-  endOfList: false
+  endOfList: false,
+  subreddit: "WatchPeopleDieInside",
+  listingType: reddit.LISTING_TYPES.HOT
 };
 const reducer = (state, action) => {
   switch (action.type) {
@@ -45,41 +47,52 @@ const reducer = (state, action) => {
         ...state,
         endOfList: true
       };
+    case "SET_SUBREDDIT":
+      return {
+        ...state,
+        subreddit: action.subreddit,
+        videos: [],
+        currentId: 0,
+        listType: "before-after",
+        endOfList: false,
+      };
     default:
       throw new Error();
   }
 };
 
-const loadVideos = async () => {
-  const latestBefore = await getBeforeAnchor("WatchPeopleDieInside", "hot");
+const loadVideos = async (subreddit, listingType) => {
+  const latestBefore = await getBeforeAnchor(subreddit, listingType);
   console.log("Before anchor: ", latestBefore);
   if (latestBefore) {
     const list = await reddit
       .init()
       .getVideos({
-        subreddit: "WatchPeopleDieInside",
-        before: latestBefore
+        subreddit: subreddit,
+        before: latestBefore,
+        listingType
       });
     if (list.length > 0) {
-      return { type: "before", list };
+      return { type: "before", list, subreddit, listingType };
     }
   }
 
-  const latestAfter = await getAfterAnchor("WatchPeopleDieInside", "hot");
+  const latestAfter = await getAfterAnchor(subreddit, listingType);
   console.log("After anchor: ", latestAfter);
   const list = await reddit
     .init()
     .getVideos({
-      subreddit: "WatchPeopleDieInside",
-      after: latestAfter || null
+      subreddit: subreddit,
+      after: latestAfter || null,
+      listingType
     });
   
   if (list.length > 0) {
     if (!latestBefore && !latestAfter) {
-      return { type: "before-after", list };
+      return { type: "before-after", list, subreddit, listingType };
     }
 
-    return { type: "after", list };
+    return { type: "after", list, subreddit, listingType };
   } else {
     return null;
   }
@@ -88,27 +101,33 @@ const loadVideos = async () => {
 function App() {
   const [state, dispatch] = useReducer(reducer, initialState);
   const needsToLoadVideos = state.videos.length === 0 || ((state.currentId + 1) > state.videos.length);
-  
+
   if (needsToLoadVideos && !state.endOfList) {
     const isMockAPI = isDev && (process.env.REACT_APP_MOCK_API === "true");
     console.log("Loading videos. Mocking API: ", isMockAPI);
     (
       (isMockAPI)
-        ? import('./api_output_short.json').then((list) => ({ list: list.default, type: "before" }))
-        : loadVideos()
+        ? import('./api_output_short.json')
+          .then((list) => ({ list: list.default, type: "before", subreddit: state.subreddit, listingType: state.listingType }))
+        : loadVideos(state.subreddit, state.listingType)
     ).then((res) => {
       if (res) {
-        console.log("Videos list: ", res.list, res.type);
-        dispatch({ type: "SET_NEW_VIDEOS", videos: res.list, listType: res.type });
+        if (res.subreddit !== state.subreddit || res.listingType !== state.listingType) {
+          console.log("Subreddit or listingtype changed. Ignoring results");
+        } else {
+          console.log("Videos list: ", res.list, res.type);
+          dispatch({ type: "SET_NEW_VIDEOS", videos: res.list, listType: res.type });
+        }
       } else {
         dispatch({ type: "END_OF_LIST" });
       }
     })
-    .catch((e) => console.log("Error: ", e));
+      .catch((e) => console.log("Error: ", e));
   }
+  
 
   const saveVideoToDBWrap = (video, videoData) => {
-    return saveVideoToDB(video, videoData, state.listType, "WatchPeopleDieInside", "hot")
+    return saveVideoToDB(video, videoData, state.listType, state.subreddit, state.listingType)
       .then(() => {
         if (state.listType === "before-after") {
           dispatch({ type: "SET_LIST_TYPE", listType: "after" });
@@ -117,7 +136,7 @@ function App() {
   };
 
   const skipVideoWrap = (video) => {
-    return skipVideo(video, state.listType, "WatchPeopleDieInside", "hot")
+    return skipVideo(video, state.listType, state.subreddit, state.listingType)
       .then(() => {
         if (state.listType === "before-after") {
           dispatch({ type: "SET_LIST_TYPE", listType: "after" });
@@ -127,8 +146,19 @@ function App() {
 
   const showNext = () => dispatch({ type: "SHOW_NEXT" });
 
+  const subredditEl = useRef(null);
+  const onSubredditChange = (e) => {
+    e.preventDefault();
+    console.log(subredditEl.current.value);
+    dispatch({ type: "SET_SUBREDDIT", subreddit: subredditEl.current.value });
+  };
+
   return (
     <>
+      <form>
+        <input ref={subredditEl} type="text" defaultValue={state.subreddit} />
+        <button onClick={onSubredditChange}>Ok</button>
+      </form>
       {
         (state.endOfList)
           ? "No more videos in this bitch"

@@ -1,10 +1,25 @@
 require('dotenv').config();
 const snoowrap = require('snoowrap');
 
-const getVideos = (r) => ({ subreddit, before = null, after = null }) => {
-  return r.getSubreddit(subreddit)
-    .getHot({ before, after })
-    .filter((post) => post.is_reddit_media_domain && post.is_video);
+const LISTING_TYPES = {
+  HOT: "HOT",
+  NEW: "NEW"
+};
+
+const isRedditVideo = (post) => post.is_reddit_media_domain && post.is_video;
+const getVideos = (r) => ({ subreddit, before = null, after = null, listingType = LISTING_TYPES.HOT }) => {
+  switch (listingType) {
+    case LISTING_TYPES.HOT:
+      return r.getSubreddit(subreddit)
+        .getHot({ before, after })
+        .filter(isRedditVideo);
+    case LISTING_TYPES.NEW:
+      return r.getSubreddit(subreddit)
+        .getNew({ before, after })
+        .filter(isRedditVideo);
+    default:
+      throw new Error(`Unknown list type: ${listingType}`);
+  };
 };
 
 const getSubmission = (r) => (id) => {
@@ -26,7 +41,7 @@ const init = () => {
   };
 };
 
-module.exports = { init };
+module.exports = { init, LISTING_TYPES };
 
 // Printing a list of the titles on the front page
 // r.getHot().map(post => post.title).then(console.log);
