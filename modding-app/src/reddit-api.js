@@ -7,13 +7,15 @@ const LISTING_TYPES = {
 };
 
 const isRedditVideo = (post) => post.is_reddit_media_domain && post.is_video;
-const getVideos = (r) => ({ subreddit, before = null, after = null, listingType = LISTING_TYPES.HOT }) => {
+const getVideos = (r) => ({ subreddit, before = null, after = null, listingType = null }) => {
   switch (listingType) {
     case LISTING_TYPES.HOT:
+      console.log("Loading: ", subreddit, LISTING_TYPES.HOT);
       return r.getSubreddit(subreddit)
         .getHot({ before, after })
         .filter(isRedditVideo);
     case LISTING_TYPES.NEW:
+      console.log("Loading: ", subreddit, LISTING_TYPES.NEW);
       return r.getSubreddit(subreddit)
         .getNew({ before, after })
         .filter(isRedditVideo);

@@ -56,6 +56,15 @@ const reducer = (state, action) => {
         listType: "before-after",
         endOfList: false,
       };
+    case 'SET_LISTING_TYPE':
+      return {
+        ...state,
+        listingType: action.listingType,
+        videos: [],
+        currentId: 0,
+        listType: "before-after",
+        endOfList: false,
+      };
     default:
       throw new Error();
   }
@@ -152,6 +161,11 @@ function App() {
     console.log(subredditEl.current.value);
     dispatch({ type: "SET_SUBREDDIT", subreddit: subredditEl.current.value });
   };
+  const onListingTypeChange = (e) => {
+    e.preventDefault();
+    console.log(e.target.value);
+    dispatch({ type: "SET_LISTING_TYPE", listingType: e.target.value });
+  };
 
   return (
     <>
@@ -159,6 +173,14 @@ function App() {
         <input ref={subredditEl} type="text" defaultValue={state.subreddit} />
         <button onClick={onSubredditChange}>Ok</button>
       </form>
+      <select onChange={onListingTypeChange} defaultValue={state.listingType}>
+        {
+          Object.keys(reddit.LISTING_TYPES).map((k) => {
+            const val = reddit.LISTING_TYPES[k];
+            return <option key={val} value={val}>{val}</option>
+          })
+        }
+      </select>
       {
         (state.endOfList)
           ? "No more videos in this bitch"
