@@ -14,7 +14,8 @@ console.log("RUNNING DEV: ", isDev);
 const initialState = {
   videos: [],
   currentId: 0,
-  listType: "before-after"
+  listType: "before-after",
+  endOfList: false
 };
 const reducer = (state, action) => {
   switch (action.type) {
@@ -38,6 +39,11 @@ const reducer = (state, action) => {
       return {
         ...state,
         listType: action.listType
+      };
+    case 'END_OF_LIST':
+      return {
+        ...state,
+        endOfList: true
       };
     default:
       throw new Error();
@@ -68,27 +74,35 @@ const loadVideos = async () => {
       after: latestAfter || null
     });
   
-  if (!latestBefore && !latestAfter) {
-    return { type: "before-after", list };
-  }
+  if (list.length > 0) {
+    if (!latestBefore && !latestAfter) {
+      return { type: "before-after", list };
+    }
 
-  return { type: "after", list };
+    return { type: "after", list };
+  } else {
+    return null;
+  }
 };
 
 function App() {
   const [state, dispatch] = useReducer(reducer, initialState);
   const needsToLoadVideos = state.videos.length === 0 || ((state.currentId + 1) > state.videos.length);
   
-  if (needsToLoadVideos) {
+  if (needsToLoadVideos && !state.endOfList) {
     const isMockAPI = isDev && (process.env.REACT_APP_MOCK_API === "true");
     console.log("Loading videos. Mocking API: ", isMockAPI);
     (
       (isMockAPI)
         ? import('./api_output_short.json').then((list) => ({ list: list.default, type: "before" }))
         : loadVideos()
-    ).then(({ type, list }) => {
-      console.log("Videos list: ", list, type);
-      dispatch({ type: "SET_NEW_VIDEOS", videos: list, listType: type });
+    ).then((res) => {
+      if (res) {
+        console.log("Videos list: ", res.list, res.type);
+        dispatch({ type: "SET_NEW_VIDEOS", videos: res.list, listType: res.type });
+      } else {
+        dispatch({ type: "END_OF_LIST" });
+      }
     })
     .catch((e) => console.log("Error: ", e));
   }
@@ -116,17 +130,19 @@ function App() {
   return (
     <>
       {
-        (state.videos[state.currentId])
-          ? <Player
-            key={state.videos[state.currentId].name}
-            video={state.videos[state.currentId]}
-            saveVideoToDB={saveVideoToDBWrap}
-            skipVideo={skipVideoWrap}
-            showNext={showNext}
-            currentVideo={state.currentId + 1}
-            totalVideos={state.videos.length}
-          />
-          : "Loading..."
+        (state.endOfList)
+          ? "No more videos in this bitch"
+          : (state.videos[state.currentId])
+            ? <Player
+              key={state.videos[state.currentId].name}
+              video={state.videos[state.currentId]}
+              saveVideoToDB={saveVideoToDBWrap}
+              skipVideo={skipVideoWrap}
+              showNext={showNext}
+              currentVideo={state.currentId + 1}
+              totalVideos={state.videos.length}
+            />
+            : "Loading..."
       }
     </>
   );
