@@ -12,6 +12,7 @@ moviepy = "==1.0.0"
 pymongo = "*"
 ffmpeg-python = "*"
 python-dotenv = "*"
+ipykernel = "*"
 
 [requires]
 python_version = "3.6"
