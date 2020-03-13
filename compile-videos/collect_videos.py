@@ -63,14 +63,24 @@ def make_compilation(form):
   return (sequences, ids)
 
 # Every sequence is of form (is_muted: Bool, has_transitions: Bool, music_over: String, length: int)
+# music1 = { "filename": "../../music/Thug_Dub.mp3", "start": 18 }
+# music2 = { "filename": "../../music/Thug_Dub.mp3", "start": 91 }
+# compilation_form = [
+#   (False, True, None, 1 * 60),
+#   (True, False, music1, 0.5 * 60),
+#   (False, True, None, 1 * 60),
+#   (True, False, music2, 0.5 * 60),
+#   (False, True, None, 0.5 * 60)
+# ]
+
 music1 = { "filename": "../../music/Thug_Dub.mp3", "start": 18 }
-music2 = { "filename": "../../music/Thug_Dub.mp3", "start": 91 }
+music2 = { "filename": "../../music/Thug_Dub.mp3", "start": 60 }
 compilation_form = [
-  (False, True, None, 1 * 60),
-  (True, False, music1, 0.5 * 60),
-  (False, True, None, 1 * 60),
-  (True, False, music2, 0.5 * 60),
-  (False, True, None, 0.5 * 60)
+  (False, True, None, 3 * 60),
+  (True, False, music1, 1 * 60),
+  (False, True, None, 3 * 60),
+  (True, False, music2, 1 * 60),
+  (False, True, None, 2 * 60)
 ]
 
 while True:
