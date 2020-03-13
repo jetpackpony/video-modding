@@ -29,7 +29,17 @@ for filename in cols:
       make_screenshots(dir_path, vid_path, info['id'], info["screenshots"])
       return process_clip(info, resolution)
 
-    clips = list(map(process_video, collection['videos']))
+    clips = []
+    for seq in collection["sequences"]:
+      seq_trans = trans if seq["transitions"] else None
+      seq_clips = list(map(process_video, seq['videos']))
+      seq_out = concatenate_videoclips(seq_clips, method="compose", transition=seq_trans)
+      if seq["sound_over"]:
+        audio = AudioFileClip(seq["sound_over"]["filename"])
+        audio = audio.subclip(seq["sound_over"]["start"], seq["sound_over"]["start"] + seq_out.duration)
+        seq_out = seq_out.set_audio(audio)
+      clips.append(seq_out)
+
     out = concatenate_videoclips(clips, method="compose", transition=trans)
     out.write_videofile(dir_path + collection['id'] + ".mp4", threads = 4, fps = 30)
 
