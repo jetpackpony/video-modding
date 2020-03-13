@@ -5,12 +5,14 @@ from editing import *
 from screenshots import *
 from env import is_prod
 from files import create_dir, list_json_files, move_file
+from moviepy.audio.fx.all import audio_normalize, volumex
 
 # resolution = (320, 240)
 resolution = (1920, 1080)
 
 trans = VideoFileClip("transition_static_0.3sec.mp4")
 trans = pad_clip_to_size(resolution, trans)
+trans = volumex(trans, 0.5)
 
 collections_path = "../../collections/" if is_prod() else "../../dev_collections/"
 outputs_path = "../../outputs/" if is_prod() else "../../dev_outputs/"
@@ -37,6 +39,7 @@ for filename in cols:
       if seq["sound_over"]:
         audio = AudioFileClip(seq["sound_over"]["filename"])
         audio = audio.subclip(seq["sound_over"]["start"], seq["sound_over"]["start"] + seq_out.duration)
+        audio = audio_normalize(audio)
         seq_out = seq_out.set_audio(audio)
       clips.append(seq_out)
 

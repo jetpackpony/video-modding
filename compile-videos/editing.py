@@ -1,6 +1,7 @@
 from moviepy.editor import *
 from env import is_prod
 import re
+from moviepy.audio.fx.all import audio_normalize
 
 videos_path = "../../downloads/" if is_prod() else "../../dev_downloads/"
 music_path = "../../music/"
@@ -19,6 +20,7 @@ def process_clip(info, resolution):
       clip = add_audio(new_audio, info['media']['musicRangeValue'], clip)
   elif info['media']['isMuted']:
       clip = clip.set_audio(None)
+  clip = audio_normalize(clip)
   return clip
 
 def pad_clip_to_size(total_size, clip):
