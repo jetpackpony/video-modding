@@ -17,11 +17,11 @@ def get_unused_videos():
   return vids_col.find({ "usedInVideo": None })
 
 def get_unused_videos_with_sound():
-  return vids_col.find({ "usedInVideo": None, "media.isMuted": False, "media.selectedMusicFile": "" })
+  return vids_col.find({"usedInVideo": None, "media.isMuted": False, "media.selectedMusicFile": ""})
 
 def get_unused_videos_muted():
   # Returns unused videos that are either muted or have music selected to overlay
-  return vids_col.find({ "usedInVideo": None, "media.isMuted": True, "media.selectedMusicFile": { "$ne":"" }})
+  return vids_col.find({"usedInVideo": None, "$or": [{"media.isMuted": True}, {"media.selectedMusicFile": {"$ne": ""}}]})
 
 def set_used_video(id):
   return vids_col.update_one({ "id": id }, { "$set": { "usedInVideo": True } }, upsert=True)
