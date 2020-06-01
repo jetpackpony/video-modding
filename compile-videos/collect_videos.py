@@ -8,8 +8,6 @@ import datetime
 from files import create_file_and_dir
 from random import randrange
 
-VIDEO_LENGTH = 60 * 10
-
 # Check if output dir exists and create it if not
 collections_path = "../../collections/" if is_prod() else "../../dev_collections/"
 
@@ -75,12 +73,18 @@ def make_compilation(form):
 
 music1 = { "filename": "../../music/Thug_Dub.mp3", "start": 18 }
 music2 = { "filename": "../../music/Thug_Dub.mp3", "start": 60 }
+music3 = { "filename": "../../music/Irie.mp3", "start": 4 }
+music4 = { "filename": "../../music/Irie.mp3", "start": 64 }
 compilation_form = [
   (False, True, None, 3 * 60),
   (True, False, music1, 1 * 60),
   (False, True, None, 3 * 60),
   (True, False, music2, 1 * 60),
-  (False, True, None, 2 * 60)
+  (False, True, None, 3 * 60),
+  (True, False, music3, 1 * 60),
+  (False, True, None, 3 * 60),
+  (True, False, music4, 1 * 60),
+  (False, True, None, 3 * 60)
 ]
 
 while True:
